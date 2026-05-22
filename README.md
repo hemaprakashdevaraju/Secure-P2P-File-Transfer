@@ -1,50 +1,108 @@
-P2P Review 3 Project (AES encryption + MD5 integrity)
+# Secure P2P File Transfer System
 
-Provided files:
-- Tracker.java
-- LoadBalancer.java
-- Peer.java
-- Client.java
-- CryptoUtils.java
-- sample_chunks/peer1_chunks/chunk_0
-- sample_chunks/peer1_chunks/chunk_1
-- sample_chunks/peer2_chunks/chunk_2
+A Java-based peer-to-peer distributed file transfer system implementing AES encryption, MD5 integrity verification, tracker-based peer discovery, and load-balanced chunk transfer.
 
-Build:
-1. Open a terminal/CMD in this folder.
-2. javac *.java
+---
 
-Run (open separate terminal windows for each component):
-1) Start Tracker (tracker listens on port 6000):
-   java Tracker 6000
+## Features
 
-2) Start Peer 1 (arguments):
-   java Peer <peerHost> <peerPort> <trackerHost> <trackerPort> <chunkDirectory>
-   Example:
-   java Peer 127.0.0.1 7101 127.0.0.1 6000 sample_chunks/peer1_chunks
+- Peer-to-peer chunk transfer
+- AES encrypted communication
+- MD5 integrity verification
+- Tracker-based peer discovery
+- Load balancing
+- Distributed file reconstruction
+- Socket-based communication
 
-3) Start Peer 2:
-   java Peer 127.0.0.1 7102 127.0.0.1 6000 sample_chunks/peer2_chunks
+---
 
-4) Start LoadBalancer:
-   java LoadBalancer <trackerHost> <trackerPort> <listenPort>
-   Example:
-   java LoadBalancer 127.0.0.1 6000 7000
+## Project Structure
 
-5) Run Client (requests multiple chunks, receives merged file):
-   java Client <loadBalancerHost> <loadBalancerPort> <outputFile> <chunkCommaList>
-   Example:
-   java Client 127.0.0.1 7000 output.txt chunk_0,chunk_1,chunk_2
+```text
+Tracker.java
+Peer.java
+Client.java
+LoadBalancer.java
+CryptoUtils.java
 
-Protocol summary:
-- Peer registers chunks with tracker: "REGISTER <chunk1>,<chunk2> <host>:<port>"
-- LoadBalancer asks tracker: "GETPEERS <chunkId>"
-- LoadBalancer requests chunk from peer: "GETCHUNK <chunkId>"
-  Peer replies: "OK <encryptedSize> <md5hash>"
-  Then peer sends raw encrypted bytes.
-- LoadBalancer decrypts, verifies MD5, streams to client.
+sample_chunks/
+```
 
-Notes:
-- AES key is hardcoded in CryptoUtils (for demo). For production use a secure key exchange.
-- If integrity fails for a chunk, the LoadBalancer will try another peer (if available).
-- Sample chunks are small text files; you can replace them with your own chunk files.
+---
+
+## Technologies Used
+
+- Java
+- Socket Programming
+- Computer Networks
+- AES Encryption
+- MD5 Hashing
+
+---
+
+## How to Run
+
+### Compile
+
+```bash
+javac *.java
+```
+
+### Start Tracker
+
+```bash
+java Tracker 6000
+```
+
+### Start Peer 1
+
+```bash
+java Peer 127.0.0.1 7101 127.0.0.1 6000 sample_chunks/peer1_chunks
+```
+
+### Start Peer 2
+
+```bash
+java Peer 127.0.0.1 7102 127.0.0.1 6000 sample_chunks/peer2_chunks
+```
+
+### Start Load Balancer
+
+```bash
+java LoadBalancer 127.0.0.1 6000 7000
+```
+
+### Run Client
+
+```bash
+java Client 127.0.0.1 7000 output.txt chunk_0,chunk_1,chunk_2
+```
+
+---
+
+## Protocol Flow
+
+1. Peers register available chunks with Tracker
+2. Client requests chunks through LoadBalancer
+3. LoadBalancer obtains peer details from Tracker
+4. Chunks are transferred securely using AES encryption
+5. MD5 hashes verify integrity
+6. Client receives reconstructed output file
+
+---
+
+## Security Features
+
+- AES encrypted chunk transfer
+- MD5 integrity verification
+- Peer validation through tracker
+
+---
+
+## Future Improvements
+
+- Dynamic chunking
+- GUI interface
+- Better fault tolerance
+- Real-time peer discovery
+- Distributed hash table implementation
